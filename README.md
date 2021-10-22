@@ -22,5 +22,4 @@ Per la card sono necessari i seguenti componenti custom installabili da hacs:
 - fold-entity-row
 
 # PER PIACERE NON MI CHIEDETE AIUTI SU COME FAR FUNZIONARE LE CARD SE USATE LA UI. 
-# Io scrivo le mie card in YAML. Non vi so aiutare se usate la UI, mai usata e mai la userò  
-# ^_- 
+Io scrivo le mie card in YAML. Non vi so aiutare se usate la UI, mai usata e mai la userò  ^_- 
