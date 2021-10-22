@@ -110,8 +110,8 @@ binary_sensor:
 climate:
   - platform: generic_thermostat
     name: Stufetta Bagno
-    heater: switch.stufetta
-    target_sensor: sensor.temperatura_bagno
+    heater: switch.stufetta_XXXXXXXX
+    target_sensor: sensor.temperatura_XXXXXXXXX
     min_temp: 19
     max_temp: 25
     target_temp: 22
