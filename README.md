@@ -16,3 +16,7 @@ Abbiamo la possibilità di impostare un orario per i giorni lavorativi e uno per
 Controllo dimenticanza serve a spegnere il termostato dopo un tempo prestabilito, che non è il tempo di funzionamento della stufetta ma il tempo di accensione del termostato. Serve ad esempio per non dimenticare il termostato acceso e lasciarlo lavorare tutta la notte. 
 
 Nel package la stufetta può essere azionata anche da un tasto (xiaomi) che è ovviamente opzionale.
+
+Per la card sono necessari i seguenti componenti custom installabili da hacs:
+- stack-in-card
+- fold-entity-row
