@@ -6,10 +6,11 @@ Gestione domotica stufetta
 
 Nulla di complicato:
 
-Con Input_boolean "Caldo Bagno" si attivano tutte le regole.
-Ogni regola può essere abilitata o disabilitata singolarmente.
+Con Input_boolean "Caldo Bagno" si attivano tutte le regole. Ogni regola può essere abilitata o disabilitata singolarmente.
 
-All'orario prestabilito il termostato si imposterò su HEAT. Il comportamento è uguale a ogni climate: Se la temperatura di riferimento sarà più alta rispetto a quella ambientale, ovviamente la stufetta si accenderà.
+All'orario prestabilito il termostato si imposterà su HEAT. 
+
+Il comportamento è uguale a ogni climate: Se la temperatura di riferimento sarà più alta rispetto a quella ambientale, ovviamente la stufetta si accenderà.
 
 Abbiamo la possibilità di impostare un orario per i giorni lavorativi e uno per i giorni feriali. Override ovviamente sovrascrive le precedenti (utile per quando avete bisogno di riscaldare l'ambiente ad un orario che non è il solito, senza per forza dover modificare l'orario solito). Quando è attivo override le schedulazioni feriale e lavorative vengono ignorate. Override si disattiva da solo ogni giorno, quindi non dovete ricordarvi di disabilitarlo quando non serve più. La voce "altro" è solo un’opzione in più.
 
