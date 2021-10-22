@@ -1,0 +1,63 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: "custom:button-card"
+    name: Stufetta
+
+  - type: entities
+    entities:
+      - type: custom:fold-entity-row
+        head: input_boolean.caldo_bagno
+        entities:
+          - entity: input_boolean.stufetta_bagno_accensione_automatica_feriali
+            type: custom:multiple-entity-row
+            name: Feriali
+            state_color: true
+            toggle: true
+            entities:
+              - entity: input_datetime.stufetta_bagno_accensione_automatica_feriali
+                name: Start
+
+          - entity: input_boolean.stufetta_bagno_accensione_automatica_festivi
+            type: custom:multiple-entity-row
+            name: Festivi
+            state_color: true
+            toggle: true
+            entities:
+              - entity: input_datetime.stufetta_bagno_accensione_automatica_festivi
+                name: Start
+
+          - entity: input_boolean.stufetta_bagno_accensione_automatica_override
+            type: custom:multiple-entity-row
+            name: Override
+            state_color: true
+            toggle: true
+            entities:
+              - entity: input_datetime.stufetta_bagno_accensione_automatica_override
+                name: Start
+
+          - type: divider
+
+          - entity: input_boolean.stufetta_bagno_accensione_automatica_altro
+            type: custom:multiple-entity-row
+            name: Altro
+            state_color: true
+            toggle: true
+            entities:
+              - entity: input_datetime.stufetta_bagno_accensione_automatica_altro
+                name: Start
+
+          - type: divider
+
+          - entity: input_boolean.stufetta_bagno_auto_off
+            type: custom:multiple-entity-row
+            name: Controllo dimenticanza
+            state_color: true
+            toggle: true
+            entities:
+              - entity: input_number.stufetta_bagno_ritardo_auto_off
+                name: Minuti
+
+  - type: thermostat
+    entity: climate.stufetta_bagno
+    name: Stufetta
