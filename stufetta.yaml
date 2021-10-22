@@ -1,0 +1,277 @@
+homeassistant:
+  customize:
+    package.node_anchors:
+      customize: &customize
+        package: 'Caldo Bagno'
+        version: 'v1.0 - 20/10/2021'
+        author: 'Calas'
+
+
+
+################################################################################
+##                  input_boolean
+################################################
+input_boolean:
+  caldo_bagno:
+    name: Caldo Bagno
+    icon: mdi:radiator
+  stufetta_bagno_accensione_automatica_feriali:
+    name: Auto ON feriali
+    icon: mdi:calendar-month
+  stufetta_bagno_accensione_automatica_festivi:
+    name: Auto ON festivi
+    icon: mdi:calendar-star
+  stufetta_bagno_accensione_automatica_override:
+    name: Auto ON Override
+    icon: mdi:update
+  stufetta_bagno_accensione_automatica_altro:
+    name: Auto ON Override
+  stufetta_bagno_auto_off:
+    name: Auto Off
+    icon: mdi:radiator-off
+
+################################################################################
+##                  input_boolean
+################################################
+input_datetime:
+  stufetta_bagno_accensione_automatica_feriali:
+    name: Caldo Bagno auton ON feriali
+    has_date: false
+    has_time: true
+  stufetta_bagno_accensione_automatica_festivi:
+    name: Caldo Bagno auton ON festivi
+    has_date: false
+    has_time: true
+  stufetta_bagno_accensione_automatica_override:
+    name: Caldo Bagno auton ON override
+    has_date: false
+    has_time: true
+  stufetta_bagno_accensione_automatica_altro:
+    name: Caldo Bagno auton ON override
+    has_date: false
+    has_time: true
+
+################################################################################
+##                  input_Number
+################################################
+input_number:
+  temperatura_riferimento_feriali:
+    name: Temperatura riferimento feriali
+    icon: mdi:temperature-celsius
+    min: 19
+    max: 23
+    step: 1
+    unit_of_measurement: 'C°'
+
+  temperatura_riferimento_festivi:
+    name: Temperatura riferimento festivi
+    icon: mdi:temperature-celsius
+    min: 19
+    max: 23
+    step: 1
+    unit_of_measurement: 'C°'
+
+  temperatura_riferimento_override:
+    name: Temperatura riferimento override
+    icon: mdi:temperature-celsius
+    min: 19
+    max: 23
+    step: 1
+    unit_of_measurement: 'C°'
+
+  temperatura_riferimento_altro:
+    name: Temperatura riferimento altro
+    icon: mdi:temperature-celsius
+    min: 19
+    max: 23
+    step: 1
+    unit_of_measurement: 'C°'
+
+  stufetta_bagno_ritardo_auto_off:
+    name: Minuti
+    initial: 40
+    min: 1
+    max: 90
+    step: 1
+
+################################################################################
+##                  binary_sensor
+################################################
+binary_sensor:
+  platform: workday
+  name: Giorno lavorativo
+  country: IT
+  workdays: [mon, tue, wed, thu, fri]
+  excludes: [sat, sun, holiday]
+
+################################################################################
+##                  Climate
+################################################
+climate:
+  - platform: generic_thermostat
+    name: Stufetta Bagno
+    heater: switch.stufetta
+    target_sensor: sensor.temperatura_bagno
+    min_temp: 19
+    max_temp: 25
+    target_temp: 22
+    cold_tolerance: 0.5
+
+################################################################################
+##                  Automation
+################################################
+automation:
+  - alias: stufetta bagno on/off tasto
+    id: 9e607c757bf7907d1dc7d2bd38d3b527
+    trigger:
+      - platform: event
+        event_type: zha_event
+        event_data:
+          device_ieee: !secret dimmer_bagno
+          command: 'click'
+          args:
+            click_type: single
+    action:
+      - choose:
+          - alias: "Se è OFF"
+            conditions:
+              - condition: template
+                value_template: "{{ state_attr('climate.stufetta_bagno','hvac_action') == 'off' }}"
+            sequence:
+              - service: climate.turn_on
+                data:
+                  entity_id: climate.stufetta_bagno
+
+          - alias: "Se è ON"
+            conditions:
+              - condition: template
+                value_template: "{{ state_attr('climate.stufetta_bagno','hvac_action') == 'heating' }}"
+            sequence:
+              - service: climate.turn_off
+                data:
+                  entity_id: climate.stufetta_bagno
+
+          - alias: "Se è in pausa"
+            conditions:
+              - condition: template
+                value_template: "{% if is_state('climate.stufetta_bagno','heat') and (state_attr('climate.stufetta_bagno','hvac_action') == 'idle') %} True {% endif %}"
+            sequence:
+              - service: climate.turn_off
+                data:
+                  entity_id: climate.stufetta_bagno
+
+  - alias: stufetta bagno stop sicurezza
+    id: 979ba63b3a12180a4668aef367a404b4
+    trigger:
+      - platform: template
+        value_template: "{{is_state('climate.stufetta_bagno', 'heat') }}"
+        for:
+          minutes: "{{ states('input_number.stufetta_bagno_ritardo_auto_off') | int }}"
+    condition:
+      - condition: state
+        entity_id: input_boolean.stufetta_bagno_auto_off
+        state: "on"
+    action:
+      - service: climate.turn_off
+        data:
+          entity_id: climate.stufetta_bagno
+
+  - alias: stufetta bagno alert
+    id: c8f68b85f9726ad46f56c5fe62cac1b0
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.stufetta_in_funzione
+        to: "on"
+    action:
+      service: notify.francesco
+      data:
+        title: 'Avviso'
+        message: Stufetta On
+
+  - alias: Caldo Bagno
+    id: 7c865abbd5cd0959e0b4d1aea964fe64
+    trigger:
+      - platform: time
+        at:
+          - input_datetime.stufetta_bagno_accensione_automatica_feriali
+          - input_datetime.stufetta_bagno_accensione_automatica_festivi
+          - input_datetime.stufetta_bagno_accensione_automatica_override
+          - input_datetime.stufetta_bagno_accensione_automatica_altro
+        action:
+      - choose:
+          - alias: "Feriali"
+            conditions:
+              - condition: state
+                entity_id: input_boolean.caldo_bagno
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.giorno_lavorativo
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.stufetta_bagno_accensione_automatica_override
+                state: "off"
+              - condition: template
+                value_template: "{% if trigger.entity_id == 'input_datetime.stufetta_bagno_accensione_automatica_feriali' %} True {% endif %}"
+            sequence:
+              - service: climate.turn_on
+                data:
+                  entity_id: climate.stufetta_bagno
+
+          - alias: "Festivi"
+            conditions:
+              - condition: state
+                entity_id: input_boolean.caldo_bagno
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.giorno_lavorativo
+                state: "off"
+              - condition: state
+                entity_id: input_boolean.stufetta_bagno_accensione_automatica_override
+                state: "off"
+              - condition: template
+                value_template: "{% if trigger.entity_id == 'input_datetime.stufetta_bagno_accensione_automatica_festivi' %} True {% endif %}"
+            sequence:
+              - service: climate.turn_on
+                data:
+                  entity_id: climate.stufetta_bagno
+
+
+          - alias: "Override"
+            conditions:
+              - condition: state
+                entity_id: input_boolean.caldo_bagno
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.stufetta_bagno_accensione_automatica_override
+                state: "on"
+              - condition: template
+                value_template: "{% if trigger.entity_id == 'input_datetime.stufetta_bagno_accensione_automatica_override' %} True {% endif %}"
+            sequence:
+              - service: climate.turn_on
+                data:
+                  entity_id: climate.stufetta_bagno
+
+          - alias: "Altro"
+            conditions:
+              - condition: state
+                entity_id: input_boolean.caldo_bagno
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.stufetta_bagno_accensione_automatica_altro
+                state: "on"
+              - condition: template
+                value_template: "{% if trigger.entity_id == 'input_datetime.stufetta_bagno_accensione_automatica_altro' %} True {% endif %}"
+            sequence:
+              - service: climate.turn_on
+                data:
+                  entity_id: climate.stufetta_bagno
+
+  - alias: stufetta bagno reset override
+    id: 8f58da2e48cb16b07514bad33853587f
+    initial_state: true
+    trigger:
+      platform: time
+      at: '13:00:00'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.stufetta_bagno_accensione_automatica_override
