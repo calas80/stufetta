@@ -14,7 +14,7 @@ Il comportamento è uguale a ogni climate: Se la temperatura di riferimento sar�
 
 Abbiamo la possibilità di impostare un orario per i giorni lavorativi e uno per i giorni feriali. Override ovviamente sovrascrive le precedenti (utile per quando avete bisogno di riscaldare l'ambiente ad un orario che non è il solito, senza per forza dover modificare l'orario solito). Quando è attivo override le schedulazioni feriale e lavorative vengono ignorate. Override si disattiva da solo ogni giorno, quindi non dovete ricordarvi di disabilitarlo quando non serve più. La voce "altro" è solo un’opzione in più.
 
-Controllo dimenticanza serve a spegnere il termostato dopo un tempo prestabilito, che non è il tempo di funzionamento della stufetta ma il tempo di accensione del termostato. Serve ad esempio per non dimenticare il termostato acceso e lasciarlo lavorare tutta la notte. 
+Controllo dimenticanza serve a spegnere il termostato (non lo switch ma il termostato!) dopo un tempo prestabilito, che non è il tempo di funzionamento della stufetta ma il tempo di accensione del termostato. Serve ad esempio per non dimenticare il termostato acceso e lasciarlo lavorare tutta la notte. 
 
 Nel package la stufetta può essere azionata anche da un tasto (xiaomi) che è ovviamente opzionale.
 
