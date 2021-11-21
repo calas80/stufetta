@@ -164,13 +164,17 @@ automation:
     id: 979ba63b3a12180a4668aef367a404b4
     trigger:
       - platform: template
-        value_template: "{{is_state('climate.stufetta_bagno', 'heat') }}"
-        for:
-          minutes: "{{ states('input_number.stufetta_bagno_ritardo_auto_off') | int }}"
+        value_template: >
+          {% set state = ((as_timestamp(now()) - as_timestamp(states.climate.stufetta_bagno.last_changed)) /60 |int )|round(0) %}
+          {% set limite = states('input_number.stufetta_bagno_ritardo_auto_off') | int  %}
+          {% if state | float >= limite %}
+            True
+          {% else %}
+            False
+          {% endif %}
     condition:
-      - condition: state
-        entity_id: input_boolean.stufetta_bagno_auto_off
-        state: "on"
+      - condition: template
+        value_template: "{{ is_state('climate.stufetta_bagno', 'heat') }}"
     action:
       - service: climate.turn_off
         data:
